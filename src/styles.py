@@ -71,7 +71,7 @@ html, body {
 .network-dropdown {
     position: absolute;
     top: 100%;
-    right: 0;
+    left: 0;
     background: #fff;
     border: 1px solid #ddd;
     min-width: 140px;
@@ -554,7 +554,7 @@ button.ape-btn {
 }
 
 @media (max-width: 860px) {
-    .page { background-size: 60%; }
+    .page { background-size: 50%; }
     .content-col { max-width: 100%; padding: 0 20px 24px; }
     .warning-banner { max-width: 100%; }
     .topbar { padding: 0 20px 16px; flex-wrap: wrap; gap: 12px; }
@@ -593,5 +593,9 @@ button.ape-btn {
         font-size: 0.74rem;
         padding: 0 7px;
     }
+}
+
+@media (max-width: 600px) {
+    .page { background-image: none; }
 }
 """)
