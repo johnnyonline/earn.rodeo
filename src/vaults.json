@@ -3,7 +3,7 @@
     "emoji1": "🧑‍🌾",
     "emoji2": "🏠",
     "nickname": "Mansion Dreamer I",
-    "short_description": "Mints crvUSD using wstETH as collateral, then farms yvcrvUSD-2",
+    "short_description": "Mints crvUSD using wstETH collateral, then farms yvcrvUSD-2",
     "address": "0xB3ef10D305A6CdbC5f19244de528d025F856EF6A",
     "network": "mainnet"
   },
@@ -11,7 +11,7 @@
     "emoji1": "🧑‍🌾",
     "emoji2": "🏠",
     "nickname": "Mansion Dreamer II",
-    "short_description": "Mints crvUSD using WETH as collateral, then farms yvcrvUSD-2",
+    "short_description": "Mints crvUSD using WETH collateral, then farms yvcrvUSD-2",
     "address": "0xf6151034BEc135059E5A6Ccff43317652960ad41",
     "network": "mainnet"
   },
@@ -19,24 +19,72 @@
     "emoji1": "🧑‍🌾",
     "emoji2": "🏠",
     "nickname": "Mansion Dreamer III",
-    "short_description": "Mints crvUSD using WBTC as collateral, then farms yvcrvUSD-2",
+    "short_description": "Mints crvUSD using WBTC collateral, then farms yvcrvUSD-2",
     "address": "0x5cee43aa4Beb43E114C50d2127b206a6b95F1151",
-    "network": "mainnet"
-  },
-  {
-    "emoji1": "🎰",
-    "emoji2": "💪",
-    "nickname": "Bold Farmer",
-    "short_description": "Mints BOLD using rETH as collateral, then farms yBOLD",
-    "address": "0x2fFff76ee152164f4dEfc95fB0cf88528251aB9E",
     "network": "mainnet"
   },
   {
     "emoji1": "🥐",
     "emoji2": "🐒",
-    "nickname": "French Degen",
-    "short_description": "Borrows USDC using WBTC from a Morpho market, then farms yvUSD",
+    "nickname": "French Hustler I",
+    "short_description": "Borrows USDC using WBTC collateral from Morpho, then farms yvUSD",
     "address": "0x68D01e2915c39b85EFE691dbb87bF93C6194A4a0",
+    "network": "mainnet"
+  },
+  {
+    "emoji1": "🥐",
+    "emoji2": "🐒",
+    "nickname": "French Hustler II",
+    "short_description": "Borrows USDT using WBTC collateral from Morpho, then farms yvUSDT",
+    "address": "0x9da810867E4AA706e02318Bf7869f8530af663ad",
+    "network": "mainnet"
+  },
+  {
+    "emoji1": "🥐",
+    "emoji2": "🐒",
+    "nickname": "French Hustler III",
+    "short_description": "Borrows USDC using OETH collateral from Morpho, then farms yvUSDC",
+    "address": "0xc5976A234574A7345EfcbB3B0AaF5F435355d2DB",
+    "network": "mainnet"
+  },
+  {
+    "emoji1": "🥐",
+    "emoji2": "🐒",
+    "nickname": "French Hustler I",
+    "short_description": "Borrows USDT using WBTC collateral from Morpho, then farms yvUSDT",
+    "address": "0x3384246D42cAc0B8DD9BBDbE902A06D0814244f7",
+    "network": "katana"
+  },
+  {
+    "emoji1": "🥐",
+    "emoji2": "🐒",
+    "nickname": "French Hustler II",
+    "short_description": "Borrows USDC using WETH collateral from Morpho, then farms yvUSDC",
+    "address": "0x2F0b01d1F36FB2c72f7DEB441a2a262e655d6888",
+    "network": "katana"
+  },
+  {
+    "emoji1": "🥐",
+    "emoji2": "🐒",
+    "nickname": "French Hustler III",
+    "short_description": "Borrows USDC using WBTC collateral from Morpho, then farms yvUSDC",
+    "address": "0x0432337365d89c0D73f1D0Cb263791F8f1B98D43",
+    "network": "katana"
+  },
+  {
+    "emoji1": "🧿",
+    "emoji2": "💪",
+    "nickname": "Bold Farmer",
+    "short_description": "Mints BOLD using rETH collateral, then farms yBOLD",
+    "address": "0x2fFff76ee152164f4dEfc95fB0cf88528251aB9E",
+    "network": "mainnet"
+  },
+  {
+    "emoji1": "👅",
+    "emoji2": "🍆",
+    "nickname": "Farmer AF",
+    "short_description": "Mints USDaf using tBTC collateral, then farms sUSDaf",
+    "address": "0x6dec370EfA894d48D8C55012B0Cd6f3C1C7C4616",
     "network": "mainnet"
   }
 ]

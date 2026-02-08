@@ -17,6 +17,36 @@ function _getWeb3Modal() {
     return _web3Modal;
 }
 
+// --- Network selector ---
+window.currentNetwork = localStorage.getItem("selectedNetwork") || "mainnet";
+
+function updateNetworkBtn(network) {
+    var btn = document.getElementById("networkBtn");
+    if (!btn || !window.NETWORKS) return;
+    btn.textContent = window.NETWORKS[network] || network;
+}
+
+function toggleNetworkDropdown() {
+    var dd = document.getElementById("networkDropdown");
+    if (dd) dd.classList.toggle("hidden");
+}
+
+function selectNetwork(key) {
+    window.currentNetwork = key;
+    localStorage.setItem("selectedNetwork", key);
+    updateNetworkBtn(key);
+    filterVaults(key);
+    var dd = document.getElementById("networkDropdown");
+    if (dd) dd.classList.add("hidden");
+}
+
+function filterVaults(network) {
+    var items = document.querySelectorAll(".vault-item");
+    items.forEach(function(item) {
+        item.style.display = item.getAttribute("data-network") === network ? "" : "none";
+    });
+}
+
 function truncateAddress(addr) {
     return addr.slice(0, 6) + "..." + addr.slice(-4);
 }
@@ -318,6 +348,19 @@ function setupProviderListeners(provider) {
 }
 
 document.addEventListener("DOMContentLoaded", async function() {
+    // Network selector init
+    updateNetworkBtn(window.currentNetwork);
+    filterVaults(window.currentNetwork);
+
+    // Close dropdown on outside click
+    document.addEventListener("click", function(e) {
+        var sel = document.querySelector(".network-selector");
+        if (sel && !sel.contains(e.target)) {
+            var dd = document.getElementById("networkDropdown");
+            if (dd) dd.classList.add("hidden");
+        }
+    });
+
     var btn = document.getElementById("walletBtn");
     if (btn) {
         btn.addEventListener("click", function() {

@@ -47,6 +47,54 @@ html, body {
     gap: 14px;
 }
 
+.topbar-right {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.network-selector {
+    position: relative;
+}
+
+.network-btn {
+    font-family: 'Aeonik', sans-serif;
+    font-size: 0.9rem;
+    padding: 8px 16px;
+    border: none;
+    background: #fff;
+    color: #000;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.network-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background: #fff;
+    border: 1px solid #ddd;
+    min-width: 140px;
+    z-index: 100;
+}
+
+.network-dropdown.hidden {
+    display: none;
+}
+
+.network-option {
+    padding: 8px 16px;
+    font-family: 'Aeonik', sans-serif;
+    font-size: 0.85rem;
+    cursor: pointer;
+    white-space: nowrap;
+}
+
+.network-option:hover {
+    background: #000;
+    color: #fff;
+}
+
 .wallet-btn {
     font-family: 'Aeonik', sans-serif;
     font-size: 0.9rem;

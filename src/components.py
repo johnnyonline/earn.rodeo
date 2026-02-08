@@ -12,6 +12,7 @@ def vault_item(vault: dict, idx: int) -> Any:
         A(vault["nickname"], href=f"/vault/{idx}", cls="vault-nickname"),
         Span(vault["short_description"], cls="vault-short"),
         cls="vault-item",
+        data_network=vault.get("network", "mainnet"),
     )
 
 
@@ -122,6 +123,22 @@ def footer() -> Any:
     )
 
 
+def _network_selector() -> Any:
+    options = [
+        Div(
+            cfg["display_name"],
+            cls="network-option",
+            onclick=f"selectNetwork('{key}')",
+        )
+        for key, cfg in NETWORK_CONFIG.items()
+    ]
+    return Div(
+        Button("Ethereum", id="networkBtn", onclick="toggleNetworkDropdown()", cls="network-btn"),
+        Div(*options, id="networkDropdown", cls="network-dropdown hidden"),
+        cls="network-selector",
+    )
+
+
 def page_shell(title: str, left_content: Any) -> Any:
     return Main(
         Div(
@@ -130,7 +147,11 @@ def page_shell(title: str, left_content: Any) -> Any:
                 H1(title, cls="site-title"),
                 cls="header-left",
             ),
-            Button("connect wallet", id="walletBtn", cls="wallet-btn"),
+            Div(
+                _network_selector(),
+                Button("connect wallet", id="walletBtn", cls="wallet-btn"),
+                cls="topbar-right",
+            ),
             cls="topbar",
         ),
         Div(

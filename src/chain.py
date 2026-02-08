@@ -7,10 +7,18 @@ from typing import Any
 from eth_abi import decode as abi_decode
 from web3 import Web3
 
-NETWORK_CONFIG: dict[str, dict[str, str]] = {
+NETWORK_CONFIG: dict[str, dict] = {
     "mainnet": {
         "rpc": os.environ.get("ETH_RPC_URL", "https://eth.llamarpc.com"),
         "explorer": "https://etherscan.io",
+        "chain_id": 1,
+        "display_name": "Ethereum",
+    },
+    "katana": {
+        "rpc": os.environ.get("KATANA_RPC_URL", ""),
+        "explorer": "https://katanascan.com",
+        "chain_id": 747474,
+        "display_name": "Katana",
     },
 }
 
