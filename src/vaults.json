@@ -24,7 +24,7 @@
     "network": "mainnet"
   },
   {
-    "emoji1": "🧑‍🌾",
+    "emoji1": "🎰",
     "emoji2": "💪",
     "nickname": "Bold Farmer",
     "short_description": "Mints BOLD using rETH as collateral, then farms yBOLD",
