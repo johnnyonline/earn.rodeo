@@ -1,10 +1,8 @@
-# ape.tax
+# Cowboy Vaults
 
-Experimental Yearn vaults. Risky, unaudited, test-in-prod.
+Experimental Yearn vaults. Made by cowboys, for cowboys.
 
-## Run with Docker (recommended)
-
-Build and run in one command:
+## Run with Docker
 
 ```bash
 docker compose up --build
@@ -24,27 +22,21 @@ Stop:
 docker compose down
 ```
 
+## Deploy to Vercel
+
+Set `ETH_RPC_URL` in the Vercel dashboard environment variables, then deploy.
+
 ## Adding vaults
 
 Edit `src/vaults.json`. Each vault entry has:
 
 ```json
 {
-  "nickname": "yvUSDC",
-  "short_description": "Experimental USDC lending vault",
-  "long_description": "Longer description for detail pages.",
-  "address": "0x..."
+  "emoji1": "🤠",
+  "emoji2": "✨",
+  "nickname": "Vault Name",
+  "short_description": "What this vault does",
+  "address": "0x...",
+  "network": "mainnet"
 }
 ```
-
-## Project structure
-
-- `Dockerfile`: container image definition
-- `docker-compose.yml`: one-command run setup
-- `index.py`: Vercel entrypoint
-- `src/main.py`: app wiring
-- `src/vaults.json`: vault data (edit this to add/remove vaults)
-- `src/routes/pages.py`: route registration
-- `src/components.py`: reusable UI components
-- `src/styles.py`: centralized CSS
-- `.claude/fasthtml-llms.txt`: FastHTML reference docs
