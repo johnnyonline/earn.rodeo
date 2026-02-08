@@ -1,1 +1,1 @@
-"""Route modules for ape.tax."""
+"""Route modules for Cowboy Vaults."""

@@ -1,1 +1,1 @@
-"""Client script helpers for ape.tax."""
+"""Client script helpers for Cowboy Vaults."""

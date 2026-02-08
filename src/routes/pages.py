@@ -24,7 +24,7 @@ def register_page_routes(rt: Any) -> None:
     def home() -> Any:
         vaults = _load_vaults()
         return (
-            Title("ape.tax"),
+            Title("Cowboy Vaults"),
             page_shell("Cowboy Vaults", vaults_list(vaults)),
         )
 
@@ -35,7 +35,7 @@ def register_page_routes(rt: Any) -> None:
             return Response("Vault not found", status_code=404)
         vault = vaults[idx]
         return (
-            Title(f"{vault['nickname']} - ape.tax"),
+            Title(f"{vault['nickname']} - Cowboy Vaults"),
             page_shell("Cowboy Vaults", vault_detail(vault, idx)),
         )
 
@@ -49,4 +49,5 @@ def register_page_routes(rt: Any) -> None:
 
     @rt("/favicon.ico")
     def favicon() -> Any:
-        return Response(status_code=204)
+        svg = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><text y=".9em" font-size="90">🤠</text></svg>'
+        return Response(svg, media_type="image/svg+xml")

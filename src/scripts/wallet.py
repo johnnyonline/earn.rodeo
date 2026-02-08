@@ -1,4 +1,4 @@
-"""Wallet connection script for ape.tax."""
+"""Wallet connection script for Cowboy Vaults."""
 
 from fasthtml.common import Script
 
@@ -217,7 +217,7 @@ function cowboyRain() {
     var count = 30;
     for (var i = 0; i < count; i++) {
         var el = document.createElement("span");
-        el.textContent = "\\u{1F920}";
+        el.textContent = "🤠";
         el.className = "cowboy-emoji";
         el.style.left = (Math.random() * 100) + "vw";
         el.style.animationDelay = (Math.random() * 1.2) + "s";

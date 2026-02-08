@@ -1,1 +1,1 @@
-"""ape.tax source package."""
+"""Cowboy Vaults source package."""
