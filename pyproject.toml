@@ -1,0 +1,35 @@
+[project]
+name = "ape-tax"
+version = "0.1.0"
+description = "UI for experimental Vaults"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "python-fasthtml==0.12.41",
+    "ruff==0.11.5",
+    "mypy==1.15.0",
+    "uvicorn[standard]==0.34.0",
+    "web3==7.14.1",
+]
+
+[tool.ruff]
+line-length = 120
+target-version = "py312"
+lint.select = ["E", "F", "I", "W"]
+fix = true
+exclude = ["__pypackages__"]
+lint.ignore = ["E501"]
+
+[tool.ruff.format]
+quote-style = "double"
+docstring-code-format = true
+
+[tool.mypy]
+mypy_path = "src"
+python_version = "3.12"
+ignore_missing_imports = true
+strict = true
+check_untyped_defs = true
+disallow_untyped_defs = true
+warn_unused_ignores = true
+disable_error_code = ["misc"]

@@ -1,0 +1,42 @@
+[
+  {
+    "emoji1": "🧑‍🌾",
+    "emoji2": "🏠",
+    "nickname": "Leveraged crvUSD Farmer",
+    "short_description": "Mints crvUSD using wstETH as collateral, then farms yvcrvUSD-2",
+    "address": "0xB3ef10D305A6CdbC5f19244de528d025F856EF6A",
+    "network": "mainnet"
+  },
+  {
+    "emoji1": "🤓",
+    "emoji2": "⏱️",
+    "nickname": "Pendle USD3-PT Maxi",
+    "short_description": "Buys Pendle USD3-PTs and sits on them until maturity",
+    "address": "0x0000000000000000000000000000000000000000",
+    "network": "mainnet"
+  },
+  {
+    "emoji1": "🧑‍🌾",
+    "emoji2": "👀",
+    "nickname": "Leveraged BOLD Farmer",
+    "short_description": "Mints BOLD using rETH as collateral, then farms yBOLD",
+    "address": "0x2fFff76ee152164f4dEfc95fB0cf88528251aB9E",
+    "network": "mainnet"
+  },
+  {
+    "emoji1": "🔥",
+    "emoji2": "🎢",
+    "nickname": "sUSDe Looper",
+    "short_description": "Loops sUSDe 10 times. High CZ-rug risk",
+    "address": "0x0000000000000000000000000000000000000000",
+    "network": "mainnet"
+  },
+  {
+    "emoji1": "🤠",
+    "emoji2": "✨",
+    "nickname": "True Markets Cowboy",
+    "short_description": "Invests into yvUSDC, reinvests all yield into a True Market",
+    "address": "0x0000000000000000000000000000000000000000",
+    "network": "mainnet"
+  }
+]

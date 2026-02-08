@@ -1,0 +1,41 @@
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Distribution/packaging
+dist/
+build/
+*.egg-info/
+
+# Virtual environments
+venv/
+env/
+.env/
+.venv/
+
+# IDE settings
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Testing
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Local development settings
+.env
+.env.local
+
+# Type checking
+.mypy_cache/
+
+# Cache files
+.uv/
+.ruff_cache
+
+# Vercel
+.vercel
+.output
