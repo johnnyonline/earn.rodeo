@@ -86,5 +86,13 @@
     "short_description": "Mints USDaf using tBTC collateral, then farms sUSDaf",
     "address": "0x6dec370EfA894d48D8C55012B0Cd6f3C1C7C4616",
     "network": "mainnet"
+  },
+  {
+    "emoji1": "🛼",
+    "emoji2": "🎠",
+    "nickname": "3Jane Shmoints Exploiter",
+    "short_description": "Auto rolls 3Jane's USD3 Pendle PT",
+    "address": "0x4C0e4d3cB62B91afBbf1Fe8e830f98A513c7234b",
+    "network": "mainnet"
   }
 ]
