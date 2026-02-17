@@ -94,5 +94,13 @@
     "short_description": "Auto rolls 3Jane's USD3 Pendle PT",
     "address": "0x4C0e4d3cB62B91afBbf1Fe8e830f98A513c7234b",
     "network": "mainnet"
+  },
+  {
+    "emoji1": "🐷",
+    "emoji2": "💦",
+    "nickname": "Pig Squirter",
+    "short_description": "Provides liquidity to yLiquid",
+    "address": "0x87F68CFbd245c8F94871A4E373a247393386513B",
+    "network": "mainnet"
   }
 ]
