@@ -107,7 +107,7 @@
     "emoji1": "👻",
     "emoji2": "💸",
     "nickname": "Aave (Labs) Will Win",
-    "short_description": "Borrows USDC using WBTC collateral, then farms yvUSD",
+    "short_description": "Borrows USDC using WBTC collateral from Aaveß, then farms yvUSD",
     "address": "0x0851eedf2A2EA59a5CB688FCC4697d624fcc0576",
     "network": "mainnet"
   }
