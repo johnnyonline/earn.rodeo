@@ -79,7 +79,7 @@ def vault_detail(vault: dict, idx: int) -> Any:
                         Button("\U0001f680 Approve", id="approve-btn", onclick="handleApprove()", cls="ape-btn-side"),
                         cls="input-approve-row",
                     ),
-                    Button("\U0001f4b0 Deposit", id="deposit-btn", onclick="handleDeposit()", disabled=True, cls="ape-btn"),
+                    Button("\U0001f4b0 Deposit", id="deposit-btn", onclick="handleDeposit()", disabled="disabled", cls="ape-btn"),
                     cls="ape-box",
                 ),
                 Div(
@@ -94,7 +94,7 @@ def vault_detail(vault: dict, idx: int) -> Any:
                         Button("max", id="withdraw-max-btn", onclick="handleWithdrawMax()", cls="max-btn"),
                         cls="input-row",
                     ),
-                    Button("💸 Withdraw", id="withdraw-btn", onclick="handleRedeem()", disabled=True, cls="ape-btn"),
+                    Button("💸 Withdraw", id="withdraw-btn", onclick="handleRedeem()", disabled="disabled", cls="ape-btn"),
                     cls="ape-box",
                 ),
                 cls="ape-boxes",
