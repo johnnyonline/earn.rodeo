@@ -102,5 +102,13 @@
     "short_description": "Provides liquidity to yLiquid",
     "address": "0x87F68CFbd245c8F94871A4E373a247393386513B",
     "network": "mainnet"
+  },
+  {
+    "emoji1": "👻",
+    "emoji2": "💸",
+    "nickname": "Aave (Labs) Will Win",
+    "short_description": "Borrows USDC using WBTC collateral from Aaveß, then farms yvUSD",
+    "address": "0x0851eedf2A2EA59a5CB688FCC4697d624fcc0576",
+    "network": "mainnet"
   }
 ]

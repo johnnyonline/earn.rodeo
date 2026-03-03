@@ -6,6 +6,7 @@ readme = "README.md"
 requires-python = ">=3.12"
 dependencies = [
     "python-fasthtml==0.12.41",
+    "fastcore==1.12.15",
     "ruff==0.11.5",
     "mypy==1.15.0",
     "uvicorn[standard]==0.34.0",
