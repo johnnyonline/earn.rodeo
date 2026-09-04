@@ -3,7 +3,7 @@ from typing import Any, Sequence
 
 from fasthtml.common import *
 
-from chain import NETWORK_CONFIG
+from chain import NETWORK_CONFIG, network_config
 
 
 def vault_item(vault: dict, idx: int) -> Any:
@@ -34,8 +34,8 @@ def _truncate_address(addr: str) -> str:
 
 def vault_detail(vault: dict, idx: int) -> Any:
     network = vault.get("network", "mainnet")
-    explorer = NETWORK_CONFIG[network]["explorer"]
-    explorer_url = f"{explorer}/address/{vault['address']}"
+    cfg = network_config(network)
+    explorer_url = f"{cfg['explorer']}/address/{vault['address']}"
 
     return Div(
         Div(
@@ -51,6 +51,11 @@ def vault_detail(vault: dict, idx: int) -> Any:
                     target="_blank",
                     cls="kv-value vault-link",
                 ),
+                cls="kv-row",
+            ),
+            Div(
+                Span("Network:", cls="kv-label"),
+                Span(cfg["display_name"], id="vault-network", onclick="switchToVaultChain()", cls="kv-value"),
                 cls="kv-row",
             ),
             Br(),
@@ -76,7 +81,7 @@ def vault_detail(vault: dict, idx: int) -> Any:
                             Button("max", id="deposit-max-btn", onclick="handleDepositMax()", cls="max-btn"),
                             cls="input-row",
                         ),
-                        Button("\U0001f680 Approve", id="approve-btn", onclick="handleApprove()", cls="ape-btn-side"),
+                        Button("\U0001f680 Approve", id="approve-btn", onclick="handleApprove()", disabled=True, cls="ape-btn-side"),
                         cls="input-approve-row",
                     ),
                     Button("\U0001f4b0 Deposit", id="deposit-btn", onclick="handleDeposit()", disabled=True, cls="ape-btn"),
@@ -102,7 +107,7 @@ def vault_detail(vault: dict, idx: int) -> Any:
             cls="vault-ape",
         ),
         A("< back to vaults", href="/", cls="back-link"),
-        Script(f"window.VAULT_IDX={idx};"),
+        Script(f"window.VAULT_IDX={idx}; window.VAULT_NETWORK={_json.dumps(network)};"),
         cls="vault-detail",
     )
 

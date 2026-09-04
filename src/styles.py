@@ -413,10 +413,22 @@ button.ape-btn-side {
     line-height: 1;
 }
 
-button.ape-btn-side:hover {
+button.ape-btn-side:not(:disabled):hover {
     background: #000;
     border-color: #000;
     color: #fff;
+}
+
+button.ape-btn-side:disabled {
+    color: #9a9a9a;
+    border-color: #c6c6c6;
+    background: #fff;
+    cursor: not-allowed;
+}
+
+.network-mismatch {
+    color: #b00020;
+    cursor: pointer;
 }
 
 button.ape-btn {

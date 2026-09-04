@@ -23,7 +23,8 @@ window.currentNetwork = localStorage.getItem("selectedNetwork") || "mainnet";
 function updateNetworkBtn(network) {
     var btn = document.getElementById("networkBtn");
     if (!btn || !window.NETWORKS) return;
-    btn.textContent = window.NETWORKS[network] || network;
+    var net = window.NETWORKS[network];
+    btn.textContent = net ? net.name : network;
 }
 
 function toggleNetworkDropdown() {
@@ -38,6 +39,8 @@ function selectNetwork(key) {
     filterVaults(key);
     var dd = document.getElementById("networkDropdown");
     if (dd) dd.classList.add("hidden");
+    var net = window.NETWORKS && window.NETWORKS[key];
+    if (net && window.currentAccount) switchWalletChain(net.chainId);
 }
 
 function filterVaults(network) {
@@ -45,6 +48,80 @@ function filterVaults(network) {
     items.forEach(function(item) {
         item.style.display = item.getAttribute("data-network") === network ? "" : "none";
     });
+}
+
+// --- Wallet chain vs vault chain ---
+// window.VAULT_NETWORK is only set on vault pages; elsewhere every chain counts as right.
+window.currentChainId = null;
+
+function vaultChainId() {
+    var net = window.NETWORKS && window.NETWORKS[window.VAULT_NETWORK];
+    return net ? net.chainId : null;
+}
+
+function onRightChain() {
+    var want = vaultChainId();
+    return want === null || window.currentChainId === want;
+}
+
+function networkKeyForChain(chainId) {
+    for (var key in window.NETWORKS) {
+        if (window.NETWORKS[key].chainId === chainId) return key;
+    }
+    return null;
+}
+
+// Keep the top-right selector on the network the wallet is actually on.
+function syncSelectorToWallet() {
+    var key = networkKeyForChain(window.currentChainId);
+    if (key && key !== window.currentNetwork) selectNetwork(key);
+}
+
+function onWalletChain(hex) {
+    window.currentChainId = hex ? parseInt(hex, 16) : null;
+    syncSelectorToWallet();
+    updateNetworkHint();
+    updateAllStates();
+}
+
+async function refreshChainId(provider) {
+    var hex = null;
+    try {
+        hex = await provider.request({method: "eth_chainId"});
+    } catch (err) {
+        console.error("Could not read wallet chain:", err);
+    }
+    onWalletChain(hex);
+}
+
+async function switchWalletChain(chainId) {
+    if (!window.currentProvider || chainId === null || window.currentChainId === chainId) return;
+    try {
+        await window.currentProvider.request({
+            method: "wallet_switchEthereumChain",
+            params: [{chainId: "0x" + chainId.toString(16)}],
+        });
+    } catch (err) {
+        console.error("Network switch failed:", err);
+    }
+}
+
+function switchToVaultChain() {
+    return switchWalletChain(vaultChainId());
+}
+
+function updateNetworkHint() {
+    var el = document.getElementById("vault-network");
+    if (!el) return;
+    var net = window.NETWORKS[window.VAULT_NETWORK];
+    var name = net ? net.name : window.VAULT_NETWORK;
+    if (window.currentAccount && !onRightChain()) {
+        el.textContent = name + " (wallet is on another network, click to switch)";
+        el.classList.add("network-mismatch");
+    } else {
+        el.textContent = name;
+        el.classList.remove("network-mismatch");
+    }
 }
 
 function truncateAddress(addr) {
@@ -70,7 +147,9 @@ async function fetchVaultData(account) {
         var resp = await fetch(url);
         if (!resp.ok) return;
         var data = await resp.json();
-        window.VAULT_DATA = data;
+        // ok=false is a placeholder (chain unreachable); keep VAULT_DATA null so nothing can be signed against it.
+        window.VAULT_DATA = data.ok ? data : null;
+        if (!data.ok) { updateAllStates(); return; }
 
         var assetEl = document.getElementById("vault-asset");
         var totalEl = document.getElementById("vault-total-assets");
@@ -90,8 +169,7 @@ async function fetchVaultData(account) {
         if (assetBalEl && data.asset_balance !== "-") assetBalEl.textContent = data.asset_balance;
         if (vaultBalEl && data.vault_balance !== "-") vaultBalEl.textContent = data.vault_balance;
 
-        updateDepositState();
-        updateWithdrawState();
+        updateAllStates();
     } catch (err) {
         console.error("Failed to fetch vault data:", err);
     }
@@ -131,6 +209,7 @@ async function connectWallet() {
         localStorage.setItem("connectedAccount", account);
         updateWalletBtn(account);
         setupProviderListeners(provider);
+        await refreshChainId(provider);
         fetchVaultData(account);
     } catch (err) {
         console.error("Wallet connection failed:", err);
@@ -139,10 +218,13 @@ async function connectWallet() {
 
 function disconnectWallet() {
     window.currentAccount = null;
+    window.currentChainId = null;
     localStorage.removeItem("walletConnected");
     localStorage.removeItem("connectedAccount");
     updateWalletBtn(null);
     clearBalances();
+    updateNetworkHint();
+    updateAllStates();
 
     try {
         if (window.currentProvider && window.currentProvider.close) {
@@ -181,9 +263,9 @@ function rawToDecimal(rawStr, decimals) {
 }
 
 function decimalToRaw(val, decimals) {
-    if (decimals === 0) return val;
     var parts = val.split(".");
     var intPart = parts[0] || "0";
+    if (decimals === 0) return intPart;
     var fracPart = (parts[1] || "").slice(0, decimals);
     while (fracPart.length < decimals) fracPart += "0";
     return (BigInt(intPart) * (BigInt(10) ** BigInt(decimals)) + BigInt(fracPart)).toString();
@@ -198,48 +280,58 @@ function enforceNumeric(input) {
 }
 
 // --- Button state management ---
+function canTransact() {
+    return !!(window.VAULT_DATA && window.currentAccount && onRightChain());
+}
+
+// Raw amount from an input, or 0n when there is no usable amount.
+function rawAmountFrom(inputId) {
+    var input = document.getElementById(inputId);
+    if (!input || !canTransact() || !(parseFloat(input.value) > 0)) return 0n;
+    return BigInt(decimalToRaw(input.value, window.VAULT_DATA.decimals));
+}
+
+function updateApproveState() {
+    var btn = document.getElementById("approve-btn");
+    if (btn) btn.disabled = !(rawAmountFrom("deposit-amount") > 0n);
+}
+
 function updateDepositState() {
-    var input = document.getElementById("deposit-amount");
-    var depositBtn = document.getElementById("deposit-btn");
-    if (!input || !depositBtn) return;
-    if (!window.VAULT_DATA || !window.currentAccount) {
-        depositBtn.disabled = true;
-        return;
-    }
-    var val = input.value;
-    if (!val || parseFloat(val) === 0) { depositBtn.disabled = true; return; }
-    var rawAmount = BigInt(decimalToRaw(val, window.VAULT_DATA.decimals));
+    var btn = document.getElementById("deposit-btn");
+    if (!btn) return;
+    var rawAmount = rawAmountFrom("deposit-amount");
+    if (rawAmount === 0n) { btn.disabled = true; return; }
     var balance = BigInt(window.VAULT_DATA.asset_balance_raw || "0");
     var allowance = BigInt(window.VAULT_DATA.allowance_raw || "0");
-    depositBtn.disabled = !(rawAmount > 0n && rawAmount <= balance && rawAmount <= allowance);
+    btn.disabled = !(rawAmount <= balance && rawAmount <= allowance);
 }
 
 function updateWithdrawState() {
-    var input = document.getElementById("withdraw-amount");
-    var withdrawBtn = document.getElementById("withdraw-btn");
-    if (!input || !withdrawBtn) return;
-    if (!window.VAULT_DATA || !window.currentAccount) {
-        withdrawBtn.disabled = true;
-        return;
-    }
-    var val = input.value;
-    if (!val || parseFloat(val) === 0) { withdrawBtn.disabled = true; return; }
-    var rawAmount = BigInt(decimalToRaw(val, window.VAULT_DATA.decimals));
+    var btn = document.getElementById("withdraw-btn");
+    if (!btn) return;
+    var rawAmount = rawAmountFrom("withdraw-amount");
+    if (rawAmount === 0n) { btn.disabled = true; return; }
     var balance = BigInt(window.VAULT_DATA.vault_balance_raw || "0");
-    withdrawBtn.disabled = !(rawAmount > 0n && rawAmount <= balance);
+    btn.disabled = !(rawAmount <= balance);
+}
+
+function updateAllStates() {
+    updateApproveState();
+    updateDepositState();
+    updateWithdrawState();
 }
 
 // --- Max buttons ---
 function handleDepositMax() {
     if (!window.VAULT_DATA) return;
     var input = document.getElementById("deposit-amount");
-    if (input) { input.value = rawToDecimal(window.VAULT_DATA.asset_balance_raw || "0", window.VAULT_DATA.decimals); updateDepositState(); }
+    if (input) { input.value = rawToDecimal(window.VAULT_DATA.asset_balance_raw || "0", window.VAULT_DATA.decimals); updateAllStates(); }
 }
 
 function handleWithdrawMax() {
     if (!window.VAULT_DATA) return;
     var input = document.getElementById("withdraw-amount");
-    if (input) { input.value = rawToDecimal(window.VAULT_DATA.vault_balance_raw || "0", window.VAULT_DATA.decimals); updateWithdrawState(); }
+    if (input) { input.value = rawToDecimal(window.VAULT_DATA.vault_balance_raw || "0", window.VAULT_DATA.decimals); updateAllStates(); }
 }
 
 // --- Cowboy rain ---
@@ -267,21 +359,19 @@ function btnLoading(btn) {
 
 function btnRestore(btn) {
     btn.innerHTML = btn._origHTML;
-    btn.disabled = false;
+    updateAllStates();
 }
 
 // --- Transactions ---
 async function handleApprove() {
-    if (!window.currentAccount || !window.VAULT_DATA) return;
-    var val = document.getElementById("deposit-amount").value;
-    if (!val || parseFloat(val) === 0) return;
-    var rawAmount = decimalToRaw(val, window.VAULT_DATA.decimals);
+    var rawAmount = rawAmountFrom("deposit-amount");
+    if (rawAmount === 0n) return;
     var btn = document.getElementById("approve-btn");
     btnLoading(btn);
     try {
         var web3 = new Web3(window.currentProvider);
         var asset = new web3.eth.Contract(ERC20_TX_ABI, window.VAULT_DATA.asset_address);
-        await asset.methods.approve(window.VAULT_DATA.vault_address, rawAmount).send({from: window.currentAccount});
+        await asset.methods.approve(window.VAULT_DATA.vault_address, rawAmount.toString()).send({from: window.currentAccount});
         cowboyRain();
         setTimeout(function() { window.location.reload(); }, 2500);
     } catch (err) {
@@ -291,16 +381,14 @@ async function handleApprove() {
 }
 
 async function handleDeposit() {
-    if (!window.currentAccount || !window.VAULT_DATA) return;
-    var val = document.getElementById("deposit-amount").value;
-    if (!val || parseFloat(val) === 0) return;
-    var rawAmount = decimalToRaw(val, window.VAULT_DATA.decimals);
+    var rawAmount = rawAmountFrom("deposit-amount");
+    if (rawAmount === 0n) return;
     var btn = document.getElementById("deposit-btn");
     btnLoading(btn);
     try {
         var web3 = new Web3(window.currentProvider);
         var vault = new web3.eth.Contract(VAULT_TX_ABI, window.VAULT_DATA.vault_address);
-        await vault.methods.deposit(rawAmount, window.currentAccount).send({from: window.currentAccount});
+        await vault.methods.deposit(rawAmount.toString(), window.currentAccount).send({from: window.currentAccount});
         cowboyRain();
         setTimeout(function() { window.location.reload(); }, 2500);
     } catch (err) {
@@ -310,16 +398,14 @@ async function handleDeposit() {
 }
 
 async function handleRedeem() {
-    if (!window.currentAccount || !window.VAULT_DATA) return;
-    var val = document.getElementById("withdraw-amount").value;
-    if (!val || parseFloat(val) === 0) return;
-    var rawAmount = decimalToRaw(val, window.VAULT_DATA.decimals);
+    var rawAmount = rawAmountFrom("withdraw-amount");
+    if (rawAmount === 0n) return;
     var btn = document.getElementById("withdraw-btn");
     btnLoading(btn);
     try {
         var web3 = new Web3(window.currentProvider);
         var vault = new web3.eth.Contract(VAULT_TX_ABI, window.VAULT_DATA.vault_address);
-        await vault.methods.redeem(rawAmount, window.currentAccount, window.currentAccount).send({from: window.currentAccount});
+        await vault.methods.redeem(rawAmount.toString(), window.currentAccount, window.currentAccount).send({from: window.currentAccount});
         cowboyRain();
         setTimeout(function() { window.location.reload(); }, 2500);
     } catch (err) {
@@ -338,9 +424,12 @@ function setupProviderListeners(provider) {
             window.currentAccount = accounts[0];
             localStorage.setItem("connectedAccount", accounts[0]);
             updateWalletBtn(accounts[0]);
+            clearBalances();
             fetchVaultData(accounts[0]);
         }
     });
+
+    provider.on("chainChanged", onWalletChain);
 
     provider.on("disconnect", function() {
         disconnectWallet();
@@ -370,9 +459,9 @@ document.addEventListener("DOMContentLoaded", async function() {
 
     // Input validation + state updates
     var depositInput = document.getElementById("deposit-amount");
-    if (depositInput) depositInput.addEventListener("input", function() { enforceNumeric(depositInput); updateDepositState(); });
+    if (depositInput) depositInput.addEventListener("input", function() { enforceNumeric(depositInput); updateAllStates(); });
     var withdrawInput = document.getElementById("withdraw-amount");
-    if (withdrawInput) withdrawInput.addEventListener("input", function() { enforceNumeric(withdrawInput); updateWithdrawState(); });
+    if (withdrawInput) withdrawInput.addEventListener("input", function() { enforceNumeric(withdrawInput); updateAllStates(); });
 
     var wasConnected = localStorage.getItem("walletConnected");
     if (wasConnected === "true") {
@@ -389,6 +478,7 @@ document.addEventListener("DOMContentLoaded", async function() {
                     localStorage.setItem("connectedAccount", accounts[0]);
                     updateWalletBtn(accounts[0]);
                     setupProviderListeners(provider);
+                    await refreshChainId(provider);
                     fetchVaultData(accounts[0]);
                 } else {
                     updateWalletBtn(null);

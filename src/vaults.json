@@ -115,7 +115,7 @@
     "emoji1": "🏹",
     "emoji2": "🪶",
     "nickname": "Future of France",
-    "short_description": "Borrows USDG using spUSDG collateral from Morpho, then loops it back into spUSDG",
+    "short_description": "Loops spUSDG against USDG on Morpho",
     "address": "0xC7d60aBfa6f4D79C2C42Bf84A54795bD8c586957",
     "network": "robinhood"
   }

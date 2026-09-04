@@ -15,7 +15,7 @@ NETWORK_CONFIG: dict[str, dict] = {
         "display_name": "Ethereum",
     },
     "katana": {
-        "rpc": os.environ.get("KATANA_RPC_URL", ""),
+        "rpc": os.environ.get("KATANA_RPC_URL", "https://rpc.katana.network"),
         "explorer": "https://katanascan.com",
         "chain_id": 747474,
         "display_name": "Katana",
@@ -27,6 +27,11 @@ NETWORK_CONFIG: dict[str, dict] = {
         "display_name": "Robinhood",
     },
 }
+
+
+def network_config(network: str) -> dict[str, Any]:
+    """Config for a network key. An unknown key (a typo in vaults.json) gets an inert fallback instead of a 500."""
+    return NETWORK_CONFIG.get(network) or {"rpc": "", "explorer": "", "chain_id": 0, "display_name": network}
 
 MULTICALL3 = Web3.to_checksum_address("0xcA11bde05977b3631167028862bE2a173976CA11")
 
@@ -84,6 +89,7 @@ ZERO_ADDRESS = "0x0000000000000000000000000000000000000000"
 
 @dataclass
 class VaultInfo:
+    ok: bool  # False means the chain could not be read and every other field is a placeholder
     asset_symbol: str
     asset_address: str
     vault_address: str
@@ -101,7 +107,7 @@ class VaultInfo:
 
 
 def _get_w3(network: str) -> Web3:
-    return Web3(Web3.HTTPProvider(NETWORK_CONFIG[network]["rpc"]))
+    return Web3(Web3.HTTPProvider(network_config(network)["rpc"]))
 
 
 def _encode(contract: Any, fn_name: str, args: list | None = None) -> bytes:  # type: ignore[type-arg]
@@ -135,6 +141,7 @@ def _format_apr(apr_raw: int) -> str:
 
 def _placeholder(address: str, explorer_url: str) -> VaultInfo:
     return VaultInfo(
+        ok=False,
         asset_symbol="-", asset_address=ZERO_ADDRESS, vault_address=address,
         explorer_url=explorer_url, total_assets="-", price_per_share="-",
         decimals=0, asset_balance="-", vault_balance="-",
@@ -147,7 +154,7 @@ def fetch_vault_info(vault: dict[str, str], account: str | None = None) -> Vault
     """Fetch all vault data (+ optional user balances) via multicall."""
     address = vault["address"]
     network = vault.get("network", "mainnet")
-    explorer_url = f"{NETWORK_CONFIG[network]['explorer']}/address/{address}"
+    explorer_url = f"{network_config(network)['explorer']}/address/{address}"
 
     if address == ZERO_ADDRESS:
         return _placeholder(address, explorer_url)
@@ -213,6 +220,7 @@ def fetch_vault_info(vault: dict[str, str], account: str | None = None) -> Vault
                 allowance_raw = str(abi_decode(["uint256"], results2[3][1])[0])
 
         return VaultInfo(
+            ok=True,
             asset_symbol=asset_symbol,
             asset_address=asset_address,
             vault_address=address,
