@@ -24,7 +24,7 @@ docker compose down
 
 ## Deploy to Vercel
 
-Set `ETH_RPC_URL` in the Vercel dashboard environment variables, then deploy.
+Set `ETH_RPC_URL` and `KATANA_RPC_URL` in the Vercel dashboard environment variables, then deploy. `ROBINHOOD_RPC_URL` is optional and defaults to the public Robinhood Chain endpoint.
 
 ## Adding vaults
 

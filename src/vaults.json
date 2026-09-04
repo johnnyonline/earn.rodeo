@@ -110,5 +110,13 @@
     "short_description": "Borrows USDC using WBTC collateral from Aave, then farms yvUSD",
     "address": "0x0851eedf2A2EA59a5CB688FCC4697d624fcc0576",
     "network": "mainnet"
+  },
+  {
+    "emoji1": "🏹",
+    "emoji2": "🪶",
+    "nickname": "Future of France",
+    "short_description": "Borrows USDG using spUSDG collateral from Morpho, then loops it back into spUSDG",
+    "address": "0xC7d60aBfa6f4D79C2C42Bf84A54795bD8c586957",
+    "network": "robinhood"
   }
 ]

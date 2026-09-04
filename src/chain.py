@@ -20,6 +20,12 @@ NETWORK_CONFIG: dict[str, dict] = {
         "chain_id": 747474,
         "display_name": "Katana",
     },
+    "robinhood": {
+        "rpc": os.environ.get("ROBINHOOD_RPC_URL", "https://rpc.mainnet.chain.robinhood.com"),
+        "explorer": "https://robinhoodchain.blockscout.com",
+        "chain_id": 4663,
+        "display_name": "Robinhood",
+    },
 }
 
 MULTICALL3 = Web3.to_checksum_address("0xcA11bde05977b3631167028862bE2a173976CA11")
