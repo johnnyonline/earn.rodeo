@@ -102,6 +102,25 @@ async function switchWalletChain(chainId) {
             params: [{chainId: "0x" + chainId.toString(16)}],
         });
     } catch (err) {
+        var key = networkKeyForChain(chainId);
+        var net = key && window.NETWORKS[key];
+        if ((err.code === 4902 || err.code === -32603) && net && net.rpcUrl) {
+            try {
+                await window.currentProvider.request({
+                    method: "wallet_addEthereumChain",
+                    params: [{
+                        chainId: "0x" + chainId.toString(16),
+                        chainName: net.name,
+                        nativeCurrency: {name: "Ether", symbol: "ETH", decimals: 18},
+                        rpcUrls: [net.rpcUrl],
+                        blockExplorerUrls: [net.explorer],
+                    }],
+                });
+                return;
+            } catch (addErr) {
+                console.error("Network add failed:", addErr);
+            }
+        }
         console.error("Network switch failed:", err);
     }
 }
@@ -175,6 +194,13 @@ async function fetchVaultData(account) {
     }
 }
 
+function fetchPageData(account) {
+    fetchVaultData(account);
+    if (typeof window.fetchCompounderData === "function") {
+        window.fetchCompounderData(account);
+    }
+}
+
 function clearBalances() {
     var assetEl = document.getElementById("user-asset-balance");
     var vaultEl = document.getElementById("user-vault-balance");
@@ -210,7 +236,7 @@ async function connectWallet() {
         updateWalletBtn(account);
         setupProviderListeners(provider);
         await refreshChainId(provider);
-        fetchVaultData(account);
+        fetchPageData(account);
     } catch (err) {
         console.error("Wallet connection failed:", err);
     }
@@ -225,6 +251,7 @@ function disconnectWallet() {
     clearBalances();
     updateNetworkHint();
     updateAllStates();
+    fetchPageData(null);
 
     try {
         if (window.currentProvider && window.currentProvider.close) {
@@ -319,6 +346,9 @@ function updateAllStates() {
     updateApproveState();
     updateDepositState();
     updateWithdrawState();
+    if (typeof window.updateCompounderStates === "function") {
+        window.updateCompounderStates();
+    }
 }
 
 // --- Max buttons ---
@@ -425,7 +455,7 @@ function setupProviderListeners(provider) {
             localStorage.setItem("connectedAccount", accounts[0]);
             updateWalletBtn(accounts[0]);
             clearBalances();
-            fetchVaultData(accounts[0]);
+            fetchPageData(accounts[0]);
         }
     });
 
@@ -479,22 +509,22 @@ document.addEventListener("DOMContentLoaded", async function() {
                     updateWalletBtn(accounts[0]);
                     setupProviderListeners(provider);
                     await refreshChainId(provider);
-                    fetchVaultData(accounts[0]);
+                    fetchPageData(accounts[0]);
                 } else {
                     updateWalletBtn(null);
-                    fetchVaultData(null);
+                    fetchPageData(null);
                 }
             } else {
                 updateWalletBtn(null);
-                fetchVaultData(null);
+                fetchPageData(null);
             }
         } catch (err) {
             console.error("Auto-reconnect failed:", err);
             updateWalletBtn(null);
-            fetchVaultData(null);
+            fetchPageData(null);
         }
     } else {
-        fetchVaultData(null);
+        fetchPageData(null);
     }
 });
 """)

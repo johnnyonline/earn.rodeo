@@ -10,6 +10,10 @@ docker compose up --build
 
 Then open `http://localhost:5001`.
 
+The UP Position Compounder is available at `/compounder`. Connect a wallet on
+Robinhood Chain to create a personal compounder, deposit up33 position NFTs,
+compound or claim rewards, and configure keeper automation.
+
 Run detached:
 
 ```bash
