@@ -123,7 +123,7 @@
     "emoji1": "🖤",
     "emoji2": "🦢",
     "nickname": "Black Swan Farmer",
-    "short_description": "Stakes SWAN on Monolith, then auctions the SwanUSD revenue for more SWAN",
+    "short_description": "Stakes SWAN on Monolith, then compounds the swanUSD revenue into more SWAN",
     "address": "0xcE918671E6D9e56E19c5Cbc4DC45655d80C65265",
     "network": "mainnet"
   }
